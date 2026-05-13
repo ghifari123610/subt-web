@@ -1,0 +1,481 @@
+╔════════════════════════════════════════════════════════════════════════╗
+║        🚀 CARA MENJALANKAN PROJECT VIDEO SUBTITLE GENERATOR            ║
+║                         STEP BY STEP LENGKAP                           ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+⏱️  TOTAL WAKTU PERTAMA: ~5-7 Menit
+   (Termasuk install, backend setup, model download)
+
+════════════════════════════════════════════════════════════════════════
+
+STEP 1 - INSTALL DEPENDENCIES
+════════════════════════════════════════════════════════════════════════
+
+Waktu: 2-5 menit
+
+1. BUKA TERMINAL/CMD:
+   • Windows 10/11:
+     - Tekan: Win + R
+     - Ketik: cmd
+     - Tekan: Enter
+   
+   • Atau klik kanan di folder C:\subt web
+     - Pilih: "Open Command Prompt here"
+
+2. KETIK COMMAND INI:
+   cd "C:\subt web"
+
+3. INSTALL SEMUA PACKAGE:
+   pip install -r requirements.txt
+
+4. TUNGGU SAMPAI SELESAI:
+   Output terakhir: "Successfully installed ..."
+
+✓ SELESAI STEP 1
+
+════════════════════════════════════════════════════════════════════════
+
+STEP 2 - JALANKAN BACKEND
+════════════════════════════════════════════════════════════════════════
+
+Waktu: 30 detik setup + 1-2 menit model loading = ~2 menit
+
+1. DI TERMINAL YANG SAMA, KETIK:
+   python main.py
+
+2. TUNGGU OUTPUT SEPERTI INI:
+   Membersihkan folder temp...
+   Loading Whisper model 'base'... (Tunggu sebentar, mengunduh jika belum ada)
+   ████████████████████ 100% - model.bin
+   Whisper model 'base' berhasil dimuat!
+   INFO:     Started server process [12345]
+   INFO:     Application startup complete.
+   INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+3. JIKA MELIHAT "Uvicorn running" = BACKEND BERHASIL ✓
+
+⚠️  PENTING: JANGAN TUTUP TERMINAL INI!
+    Biarkan berjalan di background sampai selesai pakai aplikasi.
+
+✓ SELESAI STEP 2
+
+════════════════════════════════════════════════════════════════════════
+
+STEP 3 - BUKA APLIKASI DI BROWSER
+════════════════════════════════════════════════════════════════════════
+
+Waktu: 30 detik
+
+PILIH SALAH SATU CARA:
+
+CARA A - PALING MUDAH (Double Click):
+   1. Buka File Explorer (Win + E)
+   2. Pergi ke: C:\subt web
+   3. Cari file: "index.html"
+   4. Double-click file tersebut
+   5. Browser otomatis terbuka
+
+CARA B - MANUAL URL:
+   1. Buka browser (Chrome/Firefox/Edge)
+   2. Di address bar, ketik: C:\subt web\index.html
+   3. Tekan Enter
+   4. Aplikasi terbuka
+
+CARA C - DRAG & DROP:
+   1. Buka browser
+   2. Buka File Explorer di window lain
+   3. Cari: index.html di C:\subt web
+   4. Drag file ke browser window
+   5. Aplikasi terbuka
+
+✓ APLIKASI BERHASIL TERBUKA!
+
+════════════════════════════════════════════════════════════════════════
+
+STEP 4 - GUNAKAN APLIKASI
+════════════════════════════════════════════════════════════════════════
+
+Sekarang aplikasi sudah berjalan! Begini cara pakainya:
+
+SUB-STEP 1: UPLOAD VIDEO (10-30 detik)
+────────────────────────────────────────
+
+   1. Lihat area besar di tengah browser dengan tulisan:
+      "Tarik & Lepas Video di sini atau klik untuk memilih file"
+   
+   2. PILIH SALAH SATU:
+      • Drag-drop video dari File Explorer ke area tersebut
+      • Atau klik area upload, pilih file video
+   
+   3. Format video yang didukung: MP4, WebM, OGG
+   
+   4. Max size: 50 MB (jika lebih besar, split dulu)
+
+SUB-STEP 2: GENERATE SUBTITLE OTOMATIS (1-10 menit)
+────────────────────────────────────────────────────
+
+   1. Lihat di atas ada dropdown: "Model: Base (Cepat, Cukup Akurat)"
+   
+   2. PILIH MODEL:
+      • TINY = Tercepat (30 detik - 2 menit)
+      • BASE = Balanced ✓ RECOMMENDED (1-5 menit) ← PILIH INI
+      • SMALL = Terbaik (3-10 menit)
+   
+   3. Klik button: "Auto-Generate AI"
+   
+   4. TUNGGU... (proses sedang berjalan)
+      • Di browser: Button jadi "Mengekstrak Audio & Memproses AI..."
+      • Di terminal: Akan ada output "Mulai transkripsi video..."
+   
+   5. TUNGGU SAMPAI MELIHAT:
+      Terminal: "Transkripsi selesai!"
+      Browser: Subtitle muncul di sidebar kanan
+
+SUB-STEP 3: EDIT SUBTITLE (OPTIONAL - 1-5 menit)
+─────────────────────────────────────────────────
+
+   1. Di sidebar kanan ada tab "Editor"
+   
+   2. Lihat list subtitle dengan timing
+   
+   3. BISA EDIT:
+      • Text subtitle: Ubah teks sesuai keinginan
+      • Timing: Ubah waktu mulai dan akhir
+      • Delete: Hapus subtitle yang tidak perlu
+   
+   4. LIHAT PREVIEW:
+      • Di tengah ada video player
+      • Video akan auto-play subtitle saat timing sesuai
+      • Lihat apakah sudah benar timing-nya
+
+SUB-STEP 4: CUSTOMIZE STYLE (OPTIONAL - 1-2 menit)
+──────────────────────────────────────────────────
+
+   1. Di sidebar kanan ada tab "Style"
+   
+   2. BISA CUSTOMIZE:
+      • Font Size: Ukuran subtitle (12-72px)
+      • Font Color: Warna teks (putih/biru/dll)
+      • Background Color: Warna latar
+      • Opacity: Transparansi latar (0-100%)
+      • Position: Posisi vertikal subtitle
+   
+   3. PREVIEW LANGSUNG:
+      • Ubah slider = subtitle berubah otomatis
+      • Lihat di video player bagaimana hasilnya
+
+SUB-STEP 5: EXPORT VIDEO (1-2 menit)
+────────────────────────────────────
+
+   1. Di tab "Style", ada button: "Export Video & Subtitle"
+   
+   2. KLIK button tersebut
+   
+   3. TUNGGU... (proses export sedang berjalan)
+      • Browser: Button jadi "Sedang Membakar Subtitle..."
+      • Terminal: Akan ada output "Membakar subtitle ke video..."
+   
+   4. SETELAH SELESAI:
+      • Video otomatis ter-download
+      • Nama file: "Hardsub_<nama_original>.mp4"
+      • Letaknya: Folder "Downloads" browser
+   
+   5. LIHAT HASIL:
+      • Buka video yang ter-download
+      • Subtitle sudah ter-embed langsung di video!
+
+✓ SELESAI! VIDEO DENGAN SUBTITLE SUDAH SIAP!
+
+════════════════════════════════════════════════════════════════════════
+
+TABEL WAKTU PROSES
+════════════════════════════════════════════════════════════════════════
+
+STEP 1 (Install deps):        2-5 minutes
+STEP 2 (Backend startup):     1-2 minutes
+STEP 3 (Buka browser):        30 seconds
+STEP 4 (Generate subtitle):   
+  • Model TINY:               30 sec - 2 min (untuk 1 min video)
+  • Model BASE:               1 min - 5 min (untuk 1 min video) ✓
+  • Model SMALL:              3 min - 10 min (untuk 1 min video)
+STEP 5 (Export):              30 sec - 1 min
+
+TOTAL FIRST TIME:             5-7 minutes (includes download)
+TOTAL NEXT TIME:              3-10 minutes (depends on video & model)
+
+════════════════════════════════════════════════════════════════════════
+
+MEMILIH MODEL YANG TEPAT
+════════════════════════════════════════════════════════════════════════
+
+TINY MODEL:
+   Kecepatan:  ⚡⚡⚡ TERCEPAT
+   Akurasi:    ⭐ KURANG AKURAT
+   Memory:     400 MB
+   Use case:   Testing cepat, video pendek
+   Example:    "bla-bla-bla" bukan "blablabla"
+
+BASE MODEL ✓ RECOMMENDED:
+   Kecepatan:  ⚡⚡ CEPAT
+   Akurasi:    ⭐⭐⭐⭐ BAIK
+   Memory:     1 GB
+   Use case:   General use, umum OK
+   Example:    "blablabla" cukup akurat
+
+SMALL MODEL:
+   Kecepatan:  ⚡ LAMBAT
+   Akurasi:    ⭐⭐⭐⭐⭐ SANGAT AKURAT
+   Memory:     2 GB
+   Use case:   Perlu hasil sempurna
+   Example:    "blablabla" sangat akurat
+
+REKOMENDASI:
+→ Pertama kali: Gunakan BASE (balanced)
+→ Jika hasil kurang baik: Gunakan SMALL
+→ Jika ingin cepat: Gunakan TINY
+
+════════════════════════════════════════════════════════════════════════
+
+VIDEO OPTIMAL UNTUK BEST RESULT
+════════════════════════════════════════════════════════════════════════
+
+Format:           MP4 (H.264)
+Durasi:           30 detik - 2 minutes (optimal)
+Audio:            Jelas, tidak ada background noise
+Bitrate:          1 Mbps - 10 Mbps
+Resolution:       Minimal 480p
+File size:        < 50 MB
+Language:         English, Indonesia, dll (Whisper support 99 bahasa)
+
+JIKA VIDEO TIDAK OPTIMAL:
+❌ Audio noise → Subtitle banyak salah
+❌ File terlalu besar → Upload gagal (max 50MB)
+❌ Video terlalu pendek → Mungkin tidak ada subtitle
+❌ Format tidak standar → Mungkin gagal
+
+════════════════════════════════════════════════════════════════════════
+
+JIKA ADA MASALAH
+════════════════════════════════════════════════════════════════════════
+
+MASALAH: "Failed to fetch" error di browser
+
+SOLUSI:
+  1. Cek terminal masih berjalan (jangan ditutup!)
+  2. Buka browser F12 (Developer Tools)
+  3. Pergi ke tab "Console"
+  4. Lihat error message detail
+  5. Baca: DEBUG_GUIDE.md untuk solusi lengkap
+
+MASALAH: "Address already in use" di terminal
+
+SOLUSI:
+  Buka Command Prompt baru, ketik:
+  netstat -ano | findstr :8000
+  
+  Lihat PID number, lalu:
+  taskkill /PID <NOMOR_PID> /F
+  
+  Coba jalankan lagi:
+  python main.py
+
+MASALAH: "Module not found" error
+
+SOLUSI:
+  Ketik di terminal:
+  pip install --upgrade -r requirements.txt
+  
+  Lalu coba lagi:
+  python main.py
+
+MASALAH: Processing sangat lambat
+
+SOLUSI:
+  • Gunakan model "Tiny" (lebih cepat)
+  • Gunakan video lebih pendek
+  • Close aplikasi lain yang pakai CPU
+  • Upgrade RAM jika mungkin
+
+MASALAH: Out of Memory error
+
+SOLUSI:
+  • Close aplikasi berat lain (Chrome, Photoshop, dll)
+  • Gunakan model "Tiny" atau "Base" (bukan "Small")
+  • Gunakan video lebih pendek
+  • Upgrade RAM (jika mungkin)
+
+════════════════════════════════════════════════════════════════════════
+
+JANGAN LAKUKAN:
+════════════════════════════════════════════════════════════════════════
+
+❌ Jangan tutup terminal backend saat pakai aplikasi
+   (Aplikasi tidak bisa hubung backend)
+
+❌ Jangan jalankan "python main.py" 2 kali
+   (Port conflict, salah satu error)
+
+❌ Jangan upload video > 50 MB
+   (Upload gagal, memory issue)
+
+❌ Jangan close browser saat processing
+   (Proses bisa jadi error)
+
+❌ Jangan pergi dari tab aplikasi saat export
+   (Export bisa interrupted)
+
+════════════════════════════════════════════════════════════════════════
+
+YANG HARUS DILAKUKAN:
+════════════════════════════════════════════════════════════════════════
+
+✓ Biarkan terminal backend berjalan di background
+✓ Tunggu model load sampai selesai (pertama kali 1-2 min)
+✓ Tunggu proses selesai (terlihat di terminal: "Transkripsi selesai!")
+✓ Cek browser console (F12) jika ada error
+✓ Baca dokumentasi jika perlu bantuan
+✓ Close aplikasi lain jika processing lambat
+
+════════════════════════════════════════════════════════════════════════
+
+DOKUMENTASI YANG BISA DIBACA
+════════════════════════════════════════════════════════════════════════
+
+File                    Gunakan Untuk
+─────────────────────   ─────────────────────────────────────
+MULAI_DI_SINI.md        Step-by-step detail untuk pemula
+CARA_MENJALANKAN.txt    File ini - quick reference
+README.md               Project overview & fitur
+SETUP_GUIDE.md          Advanced setup & konfigurasi
+DEBUG_GUIDE.md          Troubleshooting error
+QUICK_REFERENCE.txt     Command cepat & API
+PROJECT_STATUS.md       Status project, ver info
+
+════════════════════════════════════════════════════════════════════════
+
+CHECKLIST SEBELUM MULAI
+════════════════════════════════════════════════════════════════════════
+
+□ Python 3.8+ sudah terinstall
+  Cek: Ketik "python --version" di terminal
+
+□ Internet tersedia
+  Diperlukan: Download model (pertama kali)
+
+□ RAM minimal 4 GB
+  Recommended: 8 GB untuk smooth operation
+
+□ Disk space minimal 2 GB
+  Untuk: Model Whisper + temp files
+
+□ Browser terinstall
+  Support: Chrome, Firefox, Edge, Safari
+
+□ Semua file ada di C:\subt web
+  File: main.py, index.html, requirements.txt, dll
+
+════════════════════════════════════════════════════════════════════════
+
+COMMAND REFERENCE (JIKA BUTUH)
+════════════════════════════════════════════════════════════════════════
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run backend
+python main.py
+
+# Test health endpoint (di terminal baru)
+curl http://127.0.0.1:8000/api/health
+
+# Check Python version
+python --version
+
+# Check installed packages
+pip list
+
+# List all process
+tasklist
+
+# Kill process on port 8000
+netstat -ano | findstr :8000
+taskkill /PID <NUMBER> /F
+
+════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING QUICK LINK
+════════════════════════════════════════════════════════════════════════
+
+Error Type              Solution File
+─────────────────────   ─────────────────────────────
+"Failed to fetch"       → DEBUG_GUIDE.md
+"Address in use"        → QUICK_REFERENCE.txt
+"Module not found"      → SETUP_GUIDE.md
+Processing lambat       → QUICK_REFERENCE.txt (Performance Tips)
+Out of memory           → DEBUG_GUIDE.md
+Backend error           → DEBUG_GUIDE.md (Error Handling)
+Subtitle tidak muncul   → DEBUG_GUIDE.md
+
+════════════════════════════════════════════════════════════════════════
+
+🚀 SIAP DIMULAI - JALANKAN SEKARANG:
+════════════════════════════════════════════════════════════════════════
+
+TERMINAL 1:
+  cd "C:\subt web"
+  pip install -r requirements.txt
+  python main.py
+
+TUNGGU sampai melihat: "Uvicorn running on http://127.0.0.1:8000"
+
+BROWSER:
+  Buka: C:\subt web\index.html
+  
+DONE! ✅
+
+════════════════════════════════════════════════════════════════════════
+
+TIPS & TRIK
+════════════════════════════════════════════════════════════════════════
+
+TIPS 1: Testing Cepat
+  • Pakai video 30 detik
+  • Pilih model "Tiny"
+  • Processing hanya 30 detik
+  • Good untuk testing aplikasi
+
+TIPS 2: Hasil Berkualitas
+  • Pakai video clear + audio jernih
+  • Pilih model "Small"
+  • Processing 3-5 menit per 1 menit video
+  • Subtitle akurat 99%
+
+TIPS 3: Multiple Videos
+  • Process 1 video selesai, baru upload yang baru
+  • Jangan process 2 video sekaligus
+  • Backend hanya support 1 video at a time
+
+TIPS 4: Batch Processing (Advanced)
+  • Gunakan API endpoint direct
+  • Buat script Python untuk loop
+  • Process multiple files otomatis
+  • Lihat: README.md (Advanced Usage section)
+
+════════════════════════════════════════════════════════════════════════
+
+🎉 SELAMAT MENCOBA!
+════════════════════════════════════════════════════════════════════════
+
+Jika ada pertanyaan:
+1. Baca dokumentasi yang tersedia
+2. Check browser console (F12) untuk error detail
+3. Check terminal output untuk backend message
+4. Baca: DEBUG_GUIDE.md untuk common issues
+
+Status: ✅ Production Ready
+Version: 1.1
+Last Updated: 13 Mei 2026
+
+Happy subtitle generating! 🎬✨
+
+════════════════════════════════════════════════════════════════════════

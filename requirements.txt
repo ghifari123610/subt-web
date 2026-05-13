@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+faster-whisper
+deep-translator
+imageio-ffmpeg
+
+#  Untuk pengguna Windows:
+# venv\Scripts\activate

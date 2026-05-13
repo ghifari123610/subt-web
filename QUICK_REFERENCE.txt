@@ -1,0 +1,212 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║           QUICK REFERENCE - Video Subtitle Generator             ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+🚀 START PROJECT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Terminal 1 (Backend):
+  cd "C:\subt web"
+  python main.py
+
+Terminal 2 (Test - Optional):
+  curl http://127.0.0.1:8000/api/health
+
+Browser (Frontend):
+  Open: C:\subt web\index.html
+  Or: http://127.0.0.1:8000/  (if serve locally)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 WORKFLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Upload video (MP4, WebM, OGG) - Max 50MB
+2. Choose model (Tiny/Base/Small)
+3. Click "Auto-Generate AI"
+4. Wait for processing (1-10 min)
+5. Edit subtitles if needed (optional)
+6. Adjust style (optional)
+7. Click "Export Video & Subtitle"
+8. Download video with burned subtitles
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 COMMON COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run backend
+python main.py
+
+# Test health endpoint
+curl http://127.0.0.1:8000/api/health
+
+# Kill process using port 8000
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+
+# Check dependencies
+pip list | grep -E "fastapi|uvicorn|faster-whisper"
+
+# Validate Python syntax
+python -m py_compile main.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎛️ MODEL SELECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tiny  → ⚡⚡⚡ Fastest   | ⭐ Least accurate | 400MB
+Base  → ⚡⚡  Fast     | ⭐⭐⭐⭐ Good     | 1GB (RECOMMENDED)
+Small → ⚡   Slow     | ⭐⭐⭐⭐⭐ Best     | 2GB
+
+Recommendation: Start with BASE, upgrade to SMALL if needed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 API ENDPOINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Health Check:
+  GET http://127.0.0.1:8000/api/health
+
+Generate Subtitles:
+  POST http://127.0.0.1:8000/api/generate
+  - video: (file)
+  - model_size: tiny|base|small
+
+Export Video:
+  POST http://127.0.0.1:8000/api/export
+  - video: (file)
+  - subtitles_json: (JSON string)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🐛 DEBUGGING TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Open Browser DevTools: Press F12
+2. Go to: Console tab
+3. Look for: 📤 📥 ✅ ❌ messages
+4. Check Terminal: Python error output
+5. Test Health: curl http://127.0.0.1:8000/api/health
+
+Error Messages:
+  "Failed to fetch" → Backend not running or port issue
+  "Address already in use" → Port conflict
+  Out of Memory → Close other apps or use Tiny model
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+README.md          → Project overview & features
+SETUP_GUIDE.md     → Detailed installation steps
+DEBUG_GUIDE.md     → Troubleshooting & debugging
+FETCH_ERROR_FIX.md → Fix for "Failed to fetch"
+FIXES_APPLIED.md   → List of critical fixes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚙️ CONFIGURATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Change Port (main.py, last line):
+  uvicorn.run(app, host="127.0.0.1", port=8000)
+  Change 8000 to your port
+
+Access from Another Device:
+  uvicorn.run(app, host="0.0.0.0", port=8000)
+  Then: http://<YOUR_IP>:8000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ CHECKLIST BEFORE USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Python 3.8+ installed
+□ pip install -r requirements.txt completed
+□ Backend starts: python main.py
+□ Health check works: curl http://127.0.0.1:8000/api/health
+□ Browser opens: index.html
+□ Video can upload
+□ AI processing works
+□ Export works
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 PERFORMANCE TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Faster:
+  • Use Tiny model
+  • Shorter videos (30 sec - 1 min)
+  • Close other apps
+  • Use SSD
+
+Accurate:
+  • Use Small model
+  • Clear audio
+  • Longer videos (more context)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 SUPPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Issue → Solution:
+
+1. "Failed to fetch"
+   → Check: Backend running? Port conflict?
+   → Debug: Browser F12 Console tab
+
+2. Port already in use
+   → Fix: netstat -ano | findstr :8000
+   → Kill: taskkill /PID <PID> /F
+
+3. Out of memory
+   → Use: Tiny model or shorter video
+   → Close: Other applications
+
+4. Very slow
+   → Check: CPU usage (should be ~100%)
+   → Try: Tiny model for testing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 PROJECT FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Core:
+  main.py            Backend server
+  index.html         Frontend UI
+  script.js          Frontend logic
+  style.css          Styling
+
+Config:
+  requirements.txt   Python dependencies
+  ffmpeg.exe         Video processor
+
+Docs:
+  README.md          Overview
+  SETUP_GUIDE.md     Installation
+  DEBUG_GUIDE.md     Troubleshooting
+  FETCH_ERROR_FIX.md Solutions
+
+Working:
+  temp/              Auto-created temp files
+  venv/              Python environment
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ STATUS: PRODUCTION READY
+   Version: 1.1
+   Last Updated: 12 Mei 2026
+
+🎬 Happy subtitle generating!
+
+═══════════════════════════════════════════════════════════════════
