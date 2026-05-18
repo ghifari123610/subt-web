@@ -20,28 +20,22 @@ Project ini adalah aplikasi web untuk membuat subtitle video otomatis menggunaka
 
 ## 🔧 Issues Fixed
 
-### ✅ Critical Issue #1: Missing Dependency
-- **Problem**: `imageio-ffmpeg` tidak di-install
-- **Impact**: Backend crash on startup
-- **Solution**: Added to requirements.txt
+### ✅ Critical Issue #5: Source Code Exposure
+- **Problem**: Folder root di-mount sebagai static, mengekspos `main.py`
+- **Impact**: Keamanan terancam
+- **Solution**: Re-structured project (moved frontend to `public/`)
 - **Status**: ✅ FIXED
 
-### ✅ Critical Issue #2: No Cleanup on Error
-- **Problem**: File tidak dihapus saat error
-- **Impact**: Disk space leak
-- **Solution**: Added cleanup in exception handler
+### ✅ Critical Issue #6: FFmpeg Subtitle Filter Fail (Windows)
+- **Problem**: Path dengan drive letter (C:) gagal di FFmpeg filter
+- **Impact**: Export gagal di Windows
+- **Solution**: Implemented Windows path escaping (`C\:/...`)
 - **Status**: ✅ FIXED
 
-### ✅ Critical Issue #3: Invalid Time Input
-- **Problem**: User bisa input invalid time
-- **Impact**: Subtitle corrupt on export
-- **Solution**: Enhanced validation + boundary checking
-- **Status**: ✅ FIXED
-
-### ✅ Critical Issue #4: "Failed to Fetch" Error
-- **Problem**: Frontend error despite backend working
-- **Impact**: User tidak bisa generate subtitle
-- **Solution**: Enhanced logging + better error handling
+### ✅ Critical Issue #7: Missing ffprobe
+- **Problem**: Mengasumsikan `ffprobe` ada di PATH
+- **Impact**: Gagal deteksi resolusi video
+- **Solution**: Auto-detect `ffprobe` dari `imageio-ffmpeg`
 - **Status**: ✅ FIXED
 
 ---
@@ -50,9 +44,10 @@ Project ini adalah aplikasi web untuk membuat subtitle video otomatis menggunaka
 
 | File | Changes | Lines | Status |
 |------|---------|-------|--------|
-| `requirements.txt` | + imageio-ffmpeg | +1 | ✅ |
-| `main.py` | Error handling, logging, health endpoint | +20 | ✅ |
-| `script.js` | Enhanced logging, timeout, error parsing | +40 | ✅ |
+| `main.py` | Security mount, FFmpeg escaping, ffprobe detect | +40 | ✅ |
+| `public/index.html` | Relative paths for CSS/JS | -2 | ✅ |
+| `public/script.js` | (Moved) | - | ✅ |
+| `public/style.css` | (Moved) | - | ✅ |
 
 ---
 

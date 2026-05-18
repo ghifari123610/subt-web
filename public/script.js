@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Subtitle Editor
     function renderSubtitlesList() {
-        if (subtitles.length === 0) {
+        if (!subtitles || subtitles.length === 0) {
             subtitleList.innerHTML = '<div class="empty-state">Belum ada subtitle. Tambahkan secara manual atau gunakan Auto-Generate.</div>';
             return;
         }
@@ -255,24 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        mockAutoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengekstrak Audio & Memproses AI... (Bisa memakan waktu beberapa menit)';
+        mockAutoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses AI...';
         mockAutoBtn.disabled = true;
 
         const modelSize = document.getElementById('model-size').value;
-        const fileSizeMB = videoUpload.files[0].size / (1024 * 1024);
         
-        // Estimasi kasar: 
-        // Tiny: ~1.5 detik per MB, Base: ~3 detik per MB, Small: ~8 detik per MB
-        let multiplier = modelSize === 'tiny' ? 1.5 : (modelSize === 'base' ? 3 : 8);
-        let estimatedSeconds = Math.max(10, Math.round(fileSizeMB * multiplier));
-        let displayTime = estimatedSeconds > 60 
-            ? `${Math.floor(estimatedSeconds/60)}m ${estimatedSeconds%60}s` 
-            : `${estimatedSeconds}s`;
-
-        mockAutoBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses AI...`;
-        mockAutoBtn.disabled = true;
-        
-        // Show and Reset Progress Bar
         progressContainer.classList.remove('hidden');
         progressBar.style.width = '0%';
         progressText.textContent = 'Memproses: 0%';
@@ -282,66 +269,61 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('model_size', modelSize);
         formData.append('task', translationTask.value);
 
-        // Progress Animation Logic
-        let currentProgress = 0;
-        const progressInterval = setInterval(() => {
-            if (currentProgress < 95) {
-                // Tambah progress secara perlahan (semakin besar file, semakin lambat)
-                let increment = Math.max(0.1, 10 / estimatedSeconds);
-                currentProgress += increment;
-                if (currentProgress > 95) currentProgress = 95;
-                progressBar.style.width = `${currentProgress}%`;
-                progressText.textContent = `Memproses: ${Math.round(currentProgress)}%`;
-            }
-        }, 100);
-
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 600000); 
-
-            console.log('📤 Mengirim request ke:', 'http://127.0.0.1:8000/api/generate');
-            const response = await fetch('http://127.0.0.1:8000/api/generate', {
+            console.log('📤 Mengirim request ke:', '/api/generate');
+            const response = await fetch('/api/generate', {
                 method: 'POST',
-                body: formData,
-                signal: controller.signal
+                body: formData
             });
-            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 const errorText = await response.text();
-                try {
-                    const errorData = JSON.parse(errorText);
-                    throw new Error(errorData.detail || `HTTP ${response.status}`);
-                } catch (e) {
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
+                throw new Error(errorText);
             }
 
             const data = await response.json();
+            const taskId = data.task_id;
             
-            // Complete progress bar
-            clearInterval(progressInterval);
-            progressBar.style.width = '100%';
-            progressText.textContent = 'Selesai: 100%';
-            
-            subtitles = data.subtitles;
-            renderSubtitlesList();
-            alert('Berhasil membuat subtitle otomatis!');
-        } catch (error) {
-            clearInterval(progressInterval);
-            let errorMsg = error.message;
-            if (error.name === 'AbortError') {
-                errorMsg = "Waktu proses habis (10 menit).";
+            // Polling interval
+            const pollInterval = setInterval(async () => {
+                try {
+                    const statusRes = await fetch(`/api/status/${taskId}`);
+                    if (!statusRes.ok) throw new Error("Gagal mengambil status");
+                    const statusData = await statusRes.json();
+                    
+                    progressBar.style.width = `${statusData.progress}%`;
+                    progressText.textContent = `${statusData.progress}% - ${statusData.message || 'Memproses...'}`;
+                    
+                    if (statusData.status === 'completed') {
+                        clearInterval(pollInterval);
+                        subtitles = statusData.result;
+                        renderSubtitlesList();
+                        alert('Berhasil membuat subtitle otomatis!');
+                        resetAutoBtn();
+                    } else if (statusData.status === 'error') {
+                        clearInterval(pollInterval);
+                        alert(`Gagal membuat subtitle:\n\n${statusData.error}`);
+                        resetAutoBtn();
+                        progressContainer.classList.add('hidden');
+                    }
+                } catch(err) {
+                    console.error("Polling error", err);
+                }
+            }, 1000);
+
+            function resetAutoBtn() {
+                mockAutoBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Auto-Generate AI';
+                mockAutoBtn.disabled = false;
+                setTimeout(() => {
+                    progressContainer.classList.add('hidden');
+                }, 3000);
             }
-            alert(`Gagal membuat subtitle:\n\n${errorMsg}`);
+
+        } catch (error) {
+            alert(`Gagal mengirim tugas:\n\n${error.message}`);
             progressContainer.classList.add('hidden');
-        } finally {
             mockAutoBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Auto-Generate AI';
             mockAutoBtn.disabled = false;
-            // Sembunyikan progress bar setelah beberapa saat jika berhasil
-            setTimeout(() => {
-                if (!mockAutoBtn.disabled) progressContainer.classList.add('hidden');
-            }, 3000);
         }
     });
 
@@ -351,18 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Silakan unggah video terlebih dahulu.');
             return;
         }
-        
-        const fileSizeMB = videoUpload.files[0].size / (1024 * 1024);
-        // Estimasi ekspor: ~1.5 detik per MB
-        let estExportSeconds = Math.max(5, Math.round(fileSizeMB * 1.5));
-        let displayExportTime = estExportSeconds > 60 
-            ? `${Math.floor(estExportSeconds/60)}m ${estExportSeconds%60}s` 
-            : `${estExportSeconds}s`;
 
         exportBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Membakar Subtitle...`;
         exportBtn.disabled = true;
 
-        // Show and Reset Progress Bar for Export
         progressContainer.classList.remove('hidden');
         progressBar.style.width = '0%';
         progressText.textContent = 'Exporting: 0%';
@@ -372,81 +346,67 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('subtitles_json', JSON.stringify(subtitles));
         formData.append('styles_json', JSON.stringify(styles));
 
-        // Progress Animation Logic for Export
-        let exportProgress = 0;
-        const exportInterval = setInterval(() => {
-            if (exportProgress < 95) {
-                let increment = Math.max(0.1, 10 / estExportSeconds);
-                exportProgress += increment;
-                if (exportProgress > 95) exportProgress = 95;
-                progressBar.style.width = `${exportProgress}%`;
-                progressText.textContent = `Exporting: ${Math.round(exportProgress)}%`;
-            }
-        }, 100);
-
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 menit
-
-            console.log('📤 Mengirim request ke:', 'http://127.0.0.1:8000/api/export');
-            const response = await fetch('http://127.0.0.1:8000/api/export', {
+            console.log('📤 Mengirim request ke:', '/api/export');
+            const response = await fetch('/api/export', {
                 method: 'POST',
-                body: formData,
-                signal: controller.signal
+                body: formData
             });
-            clearTimeout(timeoutId);
-
-            console.log('📥 Response status:', response.status, response.statusText);
             
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('❌ Server error response:', errorText);
+                throw new Error(errorText);
+            }
+
+            const data = await response.json();
+            const taskId = data.task_id;
+            
+            const pollInterval = setInterval(async () => {
                 try {
-                    const errorData = JSON.parse(errorText);
-                    throw new Error(errorData.detail || `HTTP ${response.status}`);
-                } catch (e) {
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    const statusRes = await fetch(`/api/status/${taskId}`);
+                    if (!statusRes.ok) throw new Error("Gagal mengambil status");
+                    const statusData = await statusRes.json();
+                    
+                    progressBar.style.width = `${statusData.progress}%`;
+                    progressText.textContent = `${statusData.progress}% - ${statusData.message || 'Exporting...'}`;
+                    
+                    if (statusData.status === 'completed') {
+                        clearInterval(pollInterval);
+                        
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = statusData.result; 
+                        a.download = `Hardsub_${videoUpload.files[0].name}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        
+                        alert('Berhasil mengekspor video!');
+                        resetExportBtn();
+                    } else if (statusData.status === 'error') {
+                        clearInterval(pollInterval);
+                        alert(`Gagal mengekspor:\n\n${statusData.error}`);
+                        resetExportBtn();
+                        progressContainer.classList.add('hidden');
+                    }
+                } catch(err) {
+                    console.error("Polling error", err);
                 }
+            }, 1000);
+
+            function resetExportBtn() {
+                exportBtn.innerHTML = '<i class="fas fa-download"></i> Export Video & Subtitle';
+                exportBtn.disabled = false;
+                setTimeout(() => {
+                    progressContainer.classList.add('hidden');
+                }, 3000);
             }
 
-            // Complete progress bar
-            clearInterval(exportInterval);
-            progressBar.style.width = '100%';
-            progressText.textContent = 'Selesai: 100%';
-
-            // Mendapatkan file video sebagai Blob
-            const blob = await response.blob();
-            console.log('✅ Video blob diterima:', blob.size, 'bytes');
-            
-            // Membuat URL untuk mengunduh
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `Hardsub_${videoUpload.files[0].name}`;
-            document.body.appendChild(a);
-            a.click();
-            
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            
-            alert('Berhasil mengekspor video!');
         } catch (error) {
-            clearInterval(exportInterval);
-            let errorMsg = error.message;
-            if (error.name === 'AbortError') {
-                errorMsg = "Waktu proses habis (10 menit). Video mungkin terlalu besar untuk diproses oleh FFmpeg dalam waktu yang ditentukan.";
-            }
-            console.error('❌ Export error:', error);
-            alert(`Gagal mengekspor:\n\n${errorMsg}`);
+            alert(`Gagal mengekspor:\n\n${error.message}`);
             progressContainer.classList.add('hidden');
-        } finally {
             exportBtn.innerHTML = '<i class="fas fa-download"></i> Export Video & Subtitle';
             exportBtn.disabled = false;
-            // Sembunyikan progress bar setelah beberapa saat jika berhasil
-            setTimeout(() => {
-                if (!exportBtn.disabled) progressContainer.classList.add('hidden');
-            }, 3000);
         }
     });
 

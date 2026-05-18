@@ -91,7 +91,26 @@ if (newTime < subtitles[idx].end) {
 
 ---
 
-## 📊 Ringkasan Perbaikan
+## 🔴 Perbaikan Keamanan & Stabilitas (v1.2) - 14 Mei 2026
+
+### 4. ❌ → ✅ Source Code Exposure Fix
+**Masalah:** Seluruh folder proyek (termasuk `main.py`) bisa diakses via browser.
+**Perbaikan:** 
+- Frontend dipindahkan ke folder `public/`.
+- Backend hanya melayani folder `public/`.
+- Struktur: `/` melayani `index.html`, `/public` melayani assets.
+
+### 5. ❌ → ✅ FFmpeg Subtitle Filter Escaping (Windows)
+**Masalah:** Export subtitle gagal di Windows jika path mengandung drive letter (`C:`).
+**Perbaikan:** Menambahkan logika escaping khusus untuk Windows (`drive\\:path`).
+
+### 6. ❌ → ✅ Robust ffprobe Detection
+**Masalah:** Deteksi resolusi video gagal jika `ffprobe` tidak ada di PATH sistem.
+**Perbaikan:** Otomatis mendeteksi `ffprobe` dari bundle `imageio-ffmpeg`.
+
+---
+
+## 📊 Ringkasan Perbaikan Keseluruhan
 
 | Kekurangan | Severity | Status | File |
 |-----------|----------|--------|------|

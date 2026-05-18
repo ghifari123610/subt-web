@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,26 +10,36 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="glass-panel" style="display: flex; justify-content: space-between; align-items: center;">
             <h1><i class="fas fa-closed-captioning"></i> SubtiGen</h1>
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 300px;">
+            <div style="display: flex; flex-direction: column; gap: 0.6rem; width: 350px;">
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <select id="model-size" style="flex: 1; padding: 0.6rem; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif;">
-                        <option value="tiny" style="color: black;">Model: Tiny</option>
-                        <option value="base" selected style="color: black;">Model: Base</option>
-                        <option value="small" style="color: black;">Model: Small</option>
+                    <select id="model-size" title="Pilih Model AI"
+                        style="flex: 1; padding: 0.6rem; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; cursor: pointer;">
+                        <option value="tiny" style="color: black;">🤖 Tiny (Cepat)</option>
+                        <option value="base" selected style="color: black;">🤖 Base (Rekomendasi)</option>
+                        <option value="small" style="color: black;">🤖 Small (Akurat)</option>
                     </select>
-                    <button id="mock-auto-btn" class="primary-btn" style="white-space: nowrap;"><i class="fas fa-wand-magic-sparkles"></i> Auto-Generate AI</button>
+                    <button id="mock-auto-btn" class="primary-btn" style="white-space: nowrap; padding: 0.6rem 1rem;"><i
+                            class="fas fa-wand-magic-sparkles"></i> Auto-Generate</button>
                 </div>
                 <!-- Opsi Terjemahan -->
-                <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: -2px;">
-                    <label style="font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap;">Tujuan:</label>
-                    <select id="translation-task" style="flex: 1; padding: 0.3rem; border-radius: 4px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem;">
-                        <option value="transcribe">Asli (Tanpa Terjemah)</option>
-                        <option value="translate">Ke Bahasa Inggris (Whisper Native)</option>
+                <div
+                    style="display: flex; gap: 0.5rem; align-items: center; background: rgba(0,0,0,0.2); padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                    <label style="font-size: 0.75rem; color: var(--text-secondary); white-space: nowrap;"><i
+                            class="fas fa-language"></i> Tujuan:</label>
+                    <select id="translation-task"
+                        style="flex: 1; background: transparent; color: white; border: none; font-size: 0.8rem; cursor: pointer; outline: none;">
+                        <option value="transcribe" style="color: black;">Asli (Tanpa Terjemah)</option>
+                        <option value="id" style="color: black;">🇮🇩 Bahasa Indonesia</option>
+                        <option value="en" style="color: black;">🇺🇸 Bahasa Inggris</option>
+                        <option value="ja" style="color: black;">🇯🇵 Bahasa Jepang</option>
+                        <option value="zh-CN" style="color: black;">🇨🇳 Bahasa Mandarin</option>
+                        <option value="ar" style="color: black;">🇸🇦 Bahasa Arab</option>
                     </select>
                 </div>
                 <!-- Progress Bar Container -->
@@ -48,11 +59,13 @@
                     <p>Tarik & Lepas Video di sini atau klik untuk memilih file</p>
                     <input type="file" id="video-upload" accept="video/mp4,video/webm,video/ogg" hidden>
                 </div>
-                
+
                 <div class="video-container hidden" id="video-container">
                     <!-- Tombol Ganti Video yang melayang di atas video player -->
-                    <button id="change-video-btn" class="secondary-btn" style="position: absolute; top: 1rem; right: 1rem; width: auto; z-index: 10; padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(0,0,0,0.6);"><i class="fas fa-exchange-alt"></i> Ganti Video</button>
-                    
+                    <button id="change-video-btn" class="secondary-btn"
+                        style="position: absolute; top: 1rem; right: 1rem; width: auto; z-index: 10; padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(0,0,0,0.6);"><i
+                            class="fas fa-exchange-alt"></i> Ganti Video</button>
+
                     <video id="main-video" controls></video>
                     <!-- Subtitle Overlay -->
                     <div id="subtitle-overlay" class="subtitle-overlay"></div>
@@ -70,9 +83,11 @@
                 <div id="tab-editor" class="tab-content active">
                     <div class="subtitle-list" id="subtitle-list">
                         <!-- Subtitle items will go here -->
-                        <div class="empty-state">Belum ada subtitle. Tambahkan secara manual atau gunakan Auto-Generate.</div>
+                        <div class="empty-state">Belum ada subtitle. Tambahkan secara manual atau gunakan Auto-Generate.
+                        </div>
                     </div>
-                    <button id="add-subtitle-btn" class="secondary-btn"><i class="fas fa-plus"></i> Tambah Subtitle</button>
+                    <button id="add-subtitle-btn" class="secondary-btn"><i class="fas fa-plus"></i> Tambah
+                        Subtitle</button>
                 </div>
 
                 <!-- Style Customizer -->
@@ -97,11 +112,14 @@
                         <label for="pos-y">Posisi Vertikal (<span id="pos-y-val">10</span>%)</label>
                         <input type="range" id="pos-y" min="0" max="90" value="10">
                     </div>
-                    
+
                     <div class="export-section">
                         <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0 1rem 0;">
-                        <button id="export-btn" class="primary-btn" style="width: 100%;"><i class="fas fa-download"></i> Export Video & Subtitle</button>
-                        <small style="color: #94a3b8; display: block; text-align: center; margin-top: 0.5rem;">Membutuhkan backend (Server)</small>
+                        <button id="export-btn" class="primary-btn" style="width: 100%;"><i class="fas fa-download"></i>
+                            Export Video & Subtitle</button>
+                        <small
+                            style="color: #94a3b8; display: block; text-align: center; margin-top: 0.5rem;">Membutuhkan
+                            backend (Server)</small>
                     </div>
                 </div>
             </aside>
@@ -109,4 +127,5 @@
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

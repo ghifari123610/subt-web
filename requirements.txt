@@ -4,6 +4,7 @@ python-multipart
 faster-whisper
 deep-translator
 imageio-ffmpeg
+torch
 
 #  Untuk pengguna Windows:
 # venv\Scripts\activate
