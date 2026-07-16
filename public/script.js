@@ -17,6 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    // Custom Controls Elements
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const timelineContainer = document.getElementById('timeline-container');
+    const timelineProgress = document.getElementById('timeline-progress');
+    const timelineHandle = document.getElementById('timeline-handle');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationTimeEl = document.getElementById('duration-time');
+    const muteBtn = document.getElementById('mute-btn');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+
     // Style elements
     const fontSizeInput = document.getElementById('font-size');
     const fontSizeVal = document.getElementById('font-size-val');
@@ -34,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fontColor: '#ffffff',
         bgColor: '#000000',
         bgOpacity: 0.5,
-        positionY: 10
+        positionY: 15
     };
 
     // Tabs logic
@@ -85,6 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
         subtitles = [];
         renderSubtitlesList();
         updateVideoOverlay();
+
+        // Reset custom controls state
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        currentTimeEl.textContent = "00:00";
+        durationTimeEl.textContent = "00:00";
+        timelineProgress.style.width = '0%';
+        timelineHandle.style.left = '0%';
 
         const fileURL = URL.createObjectURL(file);
         mainVideo.src = fileURL;
@@ -427,5 +444,97 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    mainVideo.addEventListener('timeupdate', updateVideoOverlay);
+    // Play/Pause toggler
+    function togglePlay() {
+        if (mainVideo.paused) {
+            mainVideo.play();
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            mainVideo.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+
+    playPauseBtn.addEventListener('click', togglePlay);
+    mainVideo.addEventListener('click', togglePlay);
+
+    // Update progress & times
+    function updateProgress() {
+        if (isNaN(mainVideo.duration)) return;
+        
+        const percent = (mainVideo.currentTime / mainVideo.duration) * 100;
+        timelineProgress.style.width = `${percent}%`;
+        timelineHandle.style.left = `${percent}%`;
+        
+        currentTimeEl.textContent = formatTimeDisplay(mainVideo.currentTime);
+        durationTimeEl.textContent = formatTimeDisplay(mainVideo.duration);
+    }
+    
+    function formatTimeDisplay(secs) {
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = Math.floor(secs % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    mainVideo.addEventListener('timeupdate', () => {
+        updateProgress();
+        updateVideoOverlay();
+    });
+    
+    // Set duration when video loads metadata
+    mainVideo.addEventListener('loadedmetadata', () => {
+        durationTimeEl.textContent = formatTimeDisplay(mainVideo.duration);
+    });
+
+    // Mute/Unmute
+    muteBtn.addEventListener('click', () => {
+        mainVideo.muted = !mainVideo.muted;
+        if (mainVideo.muted) {
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        } else {
+            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
+    });
+
+    // Fullscreen
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            videoContainer.requestFullscreen().catch(err => {
+                alert(`Error enabling fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    });
+
+    // Handle timeline click / seek
+    timelineContainer.addEventListener('click', (e) => {
+        const rect = timelineContainer.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const seekTime = (clickX / width) * mainVideo.duration;
+        if (!isNaN(seekTime)) {
+            mainVideo.currentTime = seekTime;
+        }
+    });
+
+    // Drag timeline support
+    let isDraggingTimeline = false;
+    timelineContainer.addEventListener('mousedown', () => {
+        isDraggingTimeline = true;
+    });
+    document.addEventListener('mouseup', () => {
+        isDraggingTimeline = false;
+    });
+    document.addEventListener('mousemove', (e) => {
+        if (!isDraggingTimeline) return;
+        const rect = timelineContainer.getBoundingClientRect();
+        let clickX = e.clientX - rect.left;
+        if (clickX < 0) clickX = 0;
+        if (clickX > rect.width) clickX = rect.width;
+        const seekTime = (clickX / rect.width) * mainVideo.duration;
+        if (!isNaN(seekTime)) {
+            mainVideo.currentTime = seekTime;
+        }
+    });
 });

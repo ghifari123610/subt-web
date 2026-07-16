@@ -66,9 +66,35 @@
                         style="position: absolute; top: 1rem; right: 1rem; width: auto; z-index: 10; padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(0,0,0,0.6);"><i
                             class="fas fa-exchange-alt"></i> Ganti Video</button>
 
-                    <video id="main-video" controls></video>
+                    <video id="main-video"></video>
                     <!-- Subtitle Overlay -->
                     <div id="subtitle-overlay" class="subtitle-overlay"></div>
+
+                    <!-- Custom Video Controls -->
+                    <div class="custom-controls" id="custom-controls">
+                        <button id="play-pause-btn" class="control-btn" title="Play/Pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        
+                        <div class="timeline-container" id="timeline-container">
+                            <div class="timeline">
+                                <div class="progress" id="timeline-progress"></div>
+                                <div class="handle" id="timeline-handle"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="time-display">
+                            <span id="current-time">00:00</span> / <span id="duration-time">00:00</span>
+                        </div>
+                        
+                        <button id="mute-btn" class="control-btn" title="Mute/Unmute">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        
+                        <button id="fullscreen-btn" class="control-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -109,8 +135,8 @@
                         <input type="range" id="bg-opacity" min="0" max="100" value="50">
                     </div>
                     <div class="style-group">
-                        <label for="pos-y">Posisi Vertikal (<span id="pos-y-val">10</span>%)</label>
-                        <input type="range" id="pos-y" min="0" max="90" value="10">
+                        <label for="pos-y">Posisi Vertikal (<span id="pos-y-val">15</span>%)</label>
+                        <input type="range" id="pos-y" min="0" max="90" value="15">
                     </div>
 
                     <div class="export-section">

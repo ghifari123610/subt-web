@@ -1,3 +1,10 @@
+import os
+
+# Menonaktifkan dukungan Xet untuk menghindari error 401 saat download model Whisper
+os.environ["HF_HUB_DISABLE_XET_SUPPORT"] = "1"
+os.environ["HF_HUB_ENABLE_XET_FETCH"] = "0"
+os.environ["HF_HUB_DISABLE_XET"] = "1"
+
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -35,7 +42,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 compute_type = "float16" if device == "cuda" else "int8"
 cpu_threads = os.cpu_count() or 4
 
-print(f"🚀 AI Device: {device.upper()} | Compute: {compute_type} | Threads: {cpu_threads}")
+print(f"AI Device: {device.upper()} | Compute: {compute_type} | Threads: {cpu_threads}")
 
 # Membersihkan folder temp secara otomatis saat server baru dinyalakan
 @asynccontextmanager
@@ -94,7 +101,7 @@ def get_whisper_model(model_size: str):
             device=device, 
             compute_type=compute_type,
             cpu_threads=cpu_threads,
-            num_workers=2
+            num_workers=1
         )
         active_model_info["size"] = model_size
         print(f"Whisper model '{model_size}' berhasil dimuat!")
@@ -130,6 +137,9 @@ def process_generate(task_id: str, temp_video_path: str, model_size: str, task: 
             result_segments, info = model.transcribe(
                 temp_video_path, 
                 beam_size=1,
+                best_of=1,
+                temperature=0,
+                condition_on_previous_text=False,
                 task=whisper_task,
                 vad_filter=True,
                 word_timestamps=True
@@ -137,33 +147,28 @@ def process_generate(task_id: str, temp_video_path: str, model_size: str, task: 
             
             raw_subtitles = []
             for segment in result_segments:
-                raw_subtitles.append({
-                    "start": segment.start,
-                    "end": segment.end,
-                    "text": segment.text.strip()
-                })
+                if segment.words:
+                    for word in segment.words:
+                        raw_subtitles.append({
+                            "start": word.start,
+                            "end": word.end,
+                            "text": word.word.strip()
+                        })
+                else:
+                    raw_subtitles.append({
+                        "start": segment.start,
+                        "end": segment.end,
+                        "text": segment.text.strip()
+                    })
+
                 if info.duration > 0:
                     prog_percent = min(100, int((segment.end / info.duration) * 100))
                     mapped_progress = 10 + int(prog_percent * 0.85)
                     tasks[task_id]["progress"] = mapped_progress
                     tasks[task_id]["message"] = "Mentranskripsi video..."
             
-        if task not in ["transcribe", "en"]:
-            tasks[task_id]["progress"] = 96
-            tasks[task_id]["message"] = "Menerjemahkan teks..."
-            translator = GoogleTranslator(source='auto', target=task)
-            all_text = [s["text"] for s in raw_subtitles]
-            translated_text = []
-            for i in range(0, len(all_text), 20):
-                batch = all_text[i:i+20]
-                combined = " ||| ".join(batch)
-                translated_batch = translator.translate(combined)
-                if translated_batch:
-                    translated_text.extend(translated_batch.split(" ||| "))
-            
-            for idx, sub in enumerate(raw_subtitles):
-                if idx < len(translated_text):
-                    sub["text"] = translated_text[idx].strip()
+        # Translation logic disabled for word-level to maintain timing accuracy
+        # (Optional: can be re-added if batch translated, but usually not ideal for word-by-word)
 
         tasks[task_id]["progress"] = 100
         tasks[task_id]["status"] = "completed"

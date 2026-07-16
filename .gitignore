@@ -4,3 +4,17 @@ temp/
 ffmpeg.exe
 *.pyc
 .env
+
+# Whisper model cache (bisa sangat besar)
+*.bin
+*.pt
+model_cache/
+
+# IDE & OS files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Log files
+*.log
